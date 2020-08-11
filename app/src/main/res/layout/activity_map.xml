@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="14dp"
+    tools:context=".MapActivity">
+
+<!--    <ScrollView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--    <ProgressBar-->
+<!--        android:id="@+id/loadingBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/trackerMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </com.google.android.gms.maps.MapView>
+
+        <fragment
+            android:id="@+id/mapFragment"
+            android:layout_below="@id/trackerMap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+
+        <TextView
+            android:id="@+id/tvLongitude"
+            android:layout_below="@id/mapFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:text="longitude"/>
+
+        <TextView
+            android:id="@+id/tvLatitude"
+            android:layout_below="@id/mapFragment"
+            android:layout_toRightOf="@id/tvLongitude"
+            android:layout_margin="14dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="latitude"/>
+
+        <Button
+            android:id="@+id/btnBackFromTracker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvLatitude"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/custom_button"
+            android:text="Back"/>
+
+<!--    </ScrollView>-->
+
+</RelativeLayout>

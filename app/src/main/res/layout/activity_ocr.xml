@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSecondary1"
+    tools:context="com.adit.carnage.OcrActivity">
+
+    <TextView
+        android:id="@+id/tvFDua"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tex_previewCam"
+        android:text="Foto ktp anda dan convert ke TEXT"
+        android:textColor="@color/colorPrimary1"
+        android:layout_margin="20dp"/>
+
+    <TextureView
+        android:id="@+id/tex_previewCam"
+        android:layout_above="@+id/btnCapture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/btnCapture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Snap"/>
+
+    <ImageView
+        android:id="@+id/ivFoto"
+        android:layout_below="@+id/btnCapture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</RelativeLayout>

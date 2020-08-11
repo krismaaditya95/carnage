@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorSecondary1"
+    tools:context=".Fragments.HostFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabIndicatorColor="@color/colorAccent1"
+                    app:tabTextColor="@color/colorPrimary1"
+                    app:tabSelectedTextColor="@color/colorPrimaryDark1">
+
+                </com.google.android.material.tabs.TabLayout>
+            </androidx.viewpager.widget.ViewPager>
+
+    <LinearLayout
+        android:layout_below="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tvSatu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="sample_text_satu"
+            android:textColor="@color/colorPrimary1"/>
+
+        <TextView
+            android:id="@+id/tvDua"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="sample_text_dua"
+            android:textColor="@color/colorPrimary1"/>
+
+        <Button
+            android:id="@+id/tombol"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:padding="10dp"
+            android:background="@drawable/custom_button"
+            android:text="Tekan aku dongs" />
+
+<!--        <Button-->
+<!--            android:id="@+id/btnShowFragment"-->
+<!--            android:layout_below="@id/tombol"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:padding="10dp"-->
+<!--            android:textSize="16sp"-->
+<!--            android:textColor="@color/colorPrimary"-->
+<!--            android:background="@drawable/custom_button"-->
+<!--            android:text="Tampilin Fragment" />-->
+
+        <Button
+            android:id="@+id/btnTracker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:background="@drawable/custom_button"
+            android:text="Tracker" />
+
+    </LinearLayout>
+
+</RelativeLayout>

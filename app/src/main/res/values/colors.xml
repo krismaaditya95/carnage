@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <color name="colorPrimary">#008577</color>-->
+<!--    <color name="colorPrimaryDark">#00574B</color>-->
+<!--    <color name="colorAccent">#D81B60</color>-->
+
+    <color name="colorPrimary">#3a3535</color>
+    <color name="colorPrimaryDark">#232020</color>
+    <color name="colorAccent">#ff7315</color>
+
+    <color name="colorMinor">#f4f4f4</color>
+    <color name="white">#ffffff</color>
+
+    <!--  Custom 1  -->
+    <color name="colorPrimary1">#393e46</color>
+    <color name="colorPrimaryDark1">#222831</color>
+    <color name="colorAccent1">#00adb5</color>
+    <color name="colorSecondary1">#eeeeee</color>
+
+    <color name="maroonred">#e43f5a</color>
+    <color name="customblack">#1b1b2f</color>
+</resources>

@@ -1,0 +1,228 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.adit.carnage.Fragments.ChatFragment"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvArg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:layout_margin="10dp"
+                    android:backgroundTint="@color/white"
+                    android:visibility="gone">
+                        <EditText
+                            android:id="@+id/etArg"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/colorPrimaryDark"/>
+                </androidx.cardview.widget.CardView>
+
+                <Button
+                    android:id="@+id/btnStartService"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:background="@drawable/custom_button"
+                    android:layout_margin="20dp"
+                    android:padding="10dp"
+                    android:text="Start Service"
+                    android:textColor="@color/maroonred"/>
+
+                <Button
+                    android:id="@+id/btnNav0"
+                    android:layout_below="@+id/btnStartService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="NavComponen ke Chat Fragment"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/btnNav1"
+                    android:layout_below="@+id/btnNav0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="NavComponen ke Story Fragment"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/btnNav2"
+                    android:layout_below="@+id/btnNav1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:text="NavComponen ke Contact Fragment"
+                    android:visibility="gone"/>
+
+                <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:id="@+id/tvChatFragment"
+            android:layout_below="@id/btnNav2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment"
+            android:textColor="@color/colorPrimary1"
+            android:layout_margin="20dp"
+            android:textSize="14dp"
+            android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tvChatFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv00"
+            android:layout_below="@id/tvChatFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment"
+            android:textColor="@color/colorPrimary1"
+            android:layout_margin="20dp"
+            android:textSize="14dp"
+            android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tv00"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv01"
+            android:layout_below="@id/tv00"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment"
+            android:textColor="@color/colorPrimary1"
+            android:layout_margin="20dp"
+            android:textSize="14dp"
+            android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tv01"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv02"
+            android:layout_below="@id/tv01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment"
+            android:textColor="@color/colorPrimary1"
+            android:layout_margin="20dp"
+            android:textSize="14dp"
+            android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tv02"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv03"
+                    android:layout_below="@id/tv02"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hello_blank_fragment"
+                    android:textColor="@color/colorPrimary1"
+                    android:layout_margin="20dp"
+                    android:textSize="14dp"
+                    android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tv03"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv04"
+                    android:layout_below="@id/tv03"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hello_blank_fragment"
+                    android:textColor="@color/colorPrimary1"
+                    android:layout_margin="20dp"
+                    android:textSize="14dp"
+                    android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tv04"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tv05"
+                    android:layout_below="@id/tv04"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/hello_blank_fragment"
+                    android:textColor="@color/colorPrimary1"
+                    android:layout_margin="20dp"
+                    android:textSize="14dp"
+                    android:visibility="gone"/>
+
+                <View
+                    android:layout_below="@id/tv05"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_margin="10dp"
+                    android:background="@color/colorAccent1"
+                    android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/tv06"
+                android:layout_below="@id/tv05"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hello_blank_fragment"
+                android:textColor="@color/colorPrimary1"
+                android:layout_margin="20dp"
+                android:textSize="14dp"
+                android:visibility="gone"/>
+
+            <View
+                android:layout_below="@id/tv06"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_margin="10dp"
+                android:background="@color/colorAccent1"
+                android:visibility="gone"/>
+
+
+        </RelativeLayout>
+</ScrollView>
+
+</RelativeLayout>

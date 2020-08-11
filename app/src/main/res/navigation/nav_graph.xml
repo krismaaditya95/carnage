@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentSatu">
+
+    <fragment
+        android:id="@+id/fragmentSatu"
+        android:name="com.adit.carnage.Fragments.HostFragment"
+        android:label="FragmentSatu" >
+        <action
+            android:id="@+id/chatFragmentAction"
+            app:destination="@id/chatFragment"/>
+        <action
+            android:id="@+id/contactsFragmentAction"
+            app:destination="@id/contactsFragment"/>
+        <action
+            android:id="@+id/fragmentDuaAction"
+            app:destination="@id/fragmentDua"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_close_exit"
+            app:popEnterAnim="@anim/fragment_open_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.adit.carnage.Fragments.ChatFragment"
+        android:label="ChatFragment" />
+    <fragment
+        android:id="@+id/contactsFragment"
+        android:name="com.adit.carnage.Fragments.ContactsFragment"
+        android:label="ContactsFragment" />
+    <fragment
+        android:id="@+id/fragmentDua"
+        android:name="com.adit.carnage.Fragments.FragmentDua"
+        android:label="FragmentDua" >
+        <argument
+            android:name="title"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="fragment dua" />
+        <action
+            android:id="@+id/action_fragmentDua_to_fragmentSatu"
+            app:destination="@id/fragmentSatu"
+            app:popUpTo="@id/fragmentSatu"
+            app:popUpToInclusive="true"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_close_exit" />
+    </fragment>
+</navigation>
