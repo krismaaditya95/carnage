@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark1"
-    tools:context="com.adit.carnage.Fragments.ContactsFragment">
+    tools:context="com.adit.carnage.fragments.ContactsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

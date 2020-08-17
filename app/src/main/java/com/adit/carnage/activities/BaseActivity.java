@@ -1,4 +1,4 @@
-package com.adit.carnage;
+package com.adit.carnage.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.adit.carnage.R;
 
 public class BaseActivity extends AppCompatActivity {
 

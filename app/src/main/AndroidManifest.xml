@@ -46,14 +46,14 @@
                 android:resource="@xml/file_paths">
             </meta-data>
         </provider>
-        <activity android:name=".Ocr2Activity"></activity>
-        <activity android:name=".OcrActivity" />
-        <activity android:name=".BaseActivity" />
-        <activity android:name=".ApiCallActivity" />
-        <activity android:name=".MapActivity" />
+        <activity android:name=".activities.Ocr2Activity"></activity>
+        <activity android:name=".activities.OcrActivity" />
+        <activity android:name=".activities.BaseActivity" />
+        <activity android:name=".activities.ApiCallActivity" />
+        <activity android:name=".activities.MapActivity" />
 
         <service
-            android:name=".ServiceSatu"
+            android:name=".services.ServiceSatu"
             android:enabled="true"
             android:exported="true" />
 
@@ -62,8 +62,8 @@
             android:enabled="true"
             android:exported="true"/>
 
-        <activity android:name=".Activity2" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.Activity2" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

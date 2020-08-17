@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSecondary1"
-    tools:context="com.adit.carnage.Ocr2Activity">
+    tools:context="com.adit.carnage.activities.Ocr2Activity">
 
     <ImageView
         android:id="@+id/ivPreviewFoto"

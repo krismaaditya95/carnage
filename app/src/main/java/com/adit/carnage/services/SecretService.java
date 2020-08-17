@@ -108,6 +108,6 @@ public class SecretService extends Service {
     private void doRecording(){
         // start recording shit
         camera2Utility.prepareRecording();
-        camera2Utility.startRecording();
+//        camera2Utility.startRecording();
     }
 }

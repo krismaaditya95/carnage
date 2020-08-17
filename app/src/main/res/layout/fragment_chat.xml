@@ -1,20 +1,21 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<ScrollView
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.adit.carnage.Fragments.ChatFragment"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:background="@color/white">
 
-        <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+<!--<ScrollView-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    tools:context="com.adit.carnage.fragments.ChatFragment"-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android">-->
+
+<!--        <RelativeLayout-->
+<!--            xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@color/white">-->
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvArg"
@@ -40,6 +41,23 @@
                     android:padding="10dp"
                     android:text="Start Service"
                     android:textColor="@color/maroonred"/>
+
+                <Button
+                    android:id="@+id/btnStartRecording"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:background="@drawable/custom_button"
+                    android:layout_toRightOf="@+id/btnStartService"
+                    android:layout_margin="20dp"
+                    android:padding="10dp"
+                    android:text="Start Recording"
+                    android:textColor="@color/maroonred"/>
+
+                <TextureView
+                    android:id="@+id/camPreview"
+                    android:layout_below="@+id/btnStartService"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
 
                 <Button
                     android:id="@+id/btnNav0"
@@ -222,7 +240,7 @@
                 android:visibility="gone"/>
 
 
-        </RelativeLayout>
-</ScrollView>
+<!--        </RelativeLayout>-->
+<!--</ScrollView>-->
 
 </RelativeLayout>

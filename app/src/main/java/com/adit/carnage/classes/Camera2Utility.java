@@ -25,6 +25,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.Face;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.CamcorderProfile;
 import android.media.FaceDetector;
 import android.media.Image;
 import android.media.ImageReader;
@@ -33,6 +34,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -77,15 +79,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Krisma Aditya on 14/05/2020.
  */
-public class Camera2Utility implements ImageReader.OnImageAvailableListener, SurfaceHolder.Callback{
+public class Camera2Utility implements SurfaceHolder.Callback{
 
     private static final int MAX_PREVIEW_WIDTH = 1920;
     private static final int MAX_PREVIEW_HEIGHT = 1080;
     private static final int STATE_PREVIEW = 0;
-    private static final int STATE_WAITING_LOCK = 1;
-    private static final int STATE_WAITING_PRECAPTURE = 2;
-    private static final int STATE_WAITING_NON_PRECAPTURE = 3;
-    private static final int STATE_PICTURE_TAKEN = 4;
+    private static final String VIDEO_DIRECTORY_NAME = "carnage";
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -110,6 +109,7 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 2;
+    private static final int REQUEST_RECORD_AUDIO = 3;
     private int mState = STATE_PREVIEW;
     private int facesNum;
     private boolean mFaceDetectSupported;
@@ -119,17 +119,24 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
     private Handler handler;
     private Runnable runnable;
     private Image image;
+    private Size videoSize;
     private MediaRecorder mediaRecorder;
     private Service service;
+    private File currentFile;
+    private Integer orientationSensor;
+    private File mediaStorageDir;
 
     public Camera2Utility(Service service){
         mediaRecorder = new MediaRecorder();
+        //mediaStorageDir = new File(fragment.getActivity().getExternalFilesDir(null), VIDEO_DIRECTORY_NAME);
         this.service = service;
     }
 
     public Camera2Utility(Fragment fragment, TextureView textureView){
         this.fragment = fragment;
         this.mTextureView = textureView;
+        mediaRecorder = new MediaRecorder();
+        mediaStorageDir = new File(fragment.getActivity().getExternalFilesDir(null), VIDEO_DIRECTORY_NAME);
     }
 
     public Camera2Utility(Fragment fragment, TextureView textureView, SurfaceView surfaceView){
@@ -157,9 +164,7 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
 
                 @Override
                 public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-                    // Log.d(fragment.getClass().getSimpleName(), "Surface texture updated.");
-                    //Toast.makeText(fragment.getContext(), "Surface texture updated.", Toast.LENGTH_SHORT).show();
-                    //captureFramesContinuously();
+
                 }
             };
 
@@ -186,75 +191,66 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
         }
     };
 
-    public void initSurfaceView(){
-        surfaceView.setZOrderOnTop(true);
-        SurfaceHolder holder = surfaceView.getHolder();
-        holder.setFormat(PixelFormat.TRANSPARENT);
-        holder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                Canvas canvas = holder.lockCanvas();
-                if(canvas == null){
-                    Toast.makeText(fragment.getContext(), "Canvas Null!", Toast.LENGTH_SHORT).show();
-                }else{
-                    Paint paint = new Paint();
-                    paint.setColor(fragment.getResources().getColor(R.color.maroonred));
-                    paint.setStrokeWidth(6);
-                    paint.setStyle(Paint.Style.STROKE);
-//                    canvas.drawRect(100,100,200,200, paint);
-                    holder.unlockCanvasAndPost(canvas);
-                }
+    private File getOutputVideoMediaFile(){
+//        File mediaStorageDir = new File(fragment.getActivity().getExternalFilesDir(null), VIDEO_DIRECTORY_NAME);
+
+        if(!mediaStorageDir.exists()){
+            if(!mediaStorageDir.mkdirs()){
+                Toast.makeText(fragment.getContext(), "Gagal membuat direktori!", Toast.LENGTH_SHORT).show();
+                return null;
             }
+        }
+        File mediaFile;
 
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-
-            }
-        });
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + getFileName() + ".mp4");
+        return mediaFile;
     }
 
     private void setUpMediaRecorder() throws IOException {
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4); //mp4
-        mediaRecorder.setOutputFile(getVideoName());
-        mediaRecorder.setVideoEncodingBitRate(1000000);
-        mediaRecorder.setVideoFrameRate(30);
-//        mediaRecorder.setVideoSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-        mediaRecorder.setVideoSize(720, 480);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        mediaRecorder.prepare();
-    }
 
-    private String getVideoName(){
-        Date captureDate = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
-        String captureDateFormatted = format.format(captureDate);
-        return "SpyVideo_" + captureDateFormatted;
+        // create video output file
+        currentFile = getOutputVideoMediaFile();
+
+        // set output file in media recorder
+        mediaRecorder.setOutputFile(currentFile.getAbsolutePath());
+        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_720P);
+        mediaRecorder.setVideoEncodingBitRate(profile.videoBitRate);
+        mediaRecorder.setVideoFrameRate(profile.videoFrameRate);
+        mediaRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setAudioEncodingBitRate(profile.audioBitRate);
+        mediaRecorder.setAudioSamplingRate(profile.audioSampleRate);
+
+        int rotation = fragment.getActivity().getWindowManager().getDefaultDisplay().getRotation();
+        switch(orientationSensor){
+            case 90:
+                mediaRecorder.setOrientationHint(ORIENTATIONS.get(rotation));
+                break;
+            case 270:
+                mediaRecorder.setOrientationHint(ORIENTATIONS.get(rotation));
+                break;
+        }
+        mediaRecorder.prepare();
     }
 
     public void startRecording(){
         mediaRecorder.start();
-        Toast.makeText(service, "Recording...", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(fragment.getContext(), "Recording...", Toast.LENGTH_SHORT).show();
     }
 
     public void stopRecording(){
         mediaRecorder.stop();
         mediaRecorder.reset();
-        Toast.makeText(service, "Recording stopped", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(fragment.getContext(), "Recording stopped", Toast.LENGTH_SHORT).show();
     }
 
     public void prepareRecording(){
         try {
             setUpMediaRecorder();
-//            SurfaceTexture texture = mTextureView.getSurfaceTexture();
-//            assert texture != null;
-//            texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-//            Surface previewSurface = new Surface(texture);
             Surface recordSurface = mediaRecorder.getSurface();
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
             mPreviewRequestBuilder.addTarget(recordSurface);
@@ -264,6 +260,7 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
                 public void onConfigured(@NonNull CameraCaptureSession session) {
                     try {
                         session.setRepeatingRequest(mPreviewRequestBuilder.build(), null, null);
+                        startRecording();
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
@@ -275,53 +272,10 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
                 }
             }, null);
 
-
-
         } catch (IOException | CameraAccessException e) {
             e.printStackTrace();
         }
 
-    }
-
-    public void drawRectContinously(RectF rectF){
-        surfaceView.setZOrderOnTop(true);
-        SurfaceHolder holder = surfaceView.getHolder();
-        holder.setFormat(PixelFormat.TRANSPARENT);
-        holder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                Canvas canvas = holder.lockCanvas();
-                if(canvas == null){
-                    Toast.makeText(fragment.getContext(), "Canvas Null!", Toast.LENGTH_SHORT).show();
-                }else{
-                    Paint paint = new Paint();
-                    paint.setColor(fragment.getResources().getColor(R.color.maroonred));
-                    paint.setStrokeWidth(6);
-                    paint.setStyle(Paint.Style.STROKE);
-                    canvas.drawRect(rectF, paint);
-                    holder.unlockCanvasAndPost(canvas);
-                }
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-
-            }
-        });
-    }
-
-    // face detector
-    public void detectFace(SurfaceTexture texture){
-        Surface surface = new Surface(texture);
-        Bitmap bitmap = mTextureView.getBitmap();
-        FaceDetector faceDetector = new FaceDetector(bitmap.getWidth(), bitmap.getHeight(), 10);
-        //Face faces[] = faceDetector.findFaces(, );
-        //int faces = faceDetector.findFaces(bitmap, )
     }
 
     public void takePicture(){
@@ -356,39 +310,19 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
-            //face detect
-            captureBuilder.set(CaptureRequest.STATISTICS_FACE_DETECT_MODE, CameraMetadata.STATISTICS_FACE_DETECT_MODE_FULL);
-            int max_count = characteristics.get(CameraCharacteristics.STATISTICS_INFO_MAX_FACE_COUNT);
-            int modes [] = characteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES);
-
-            if(modes.length > 0){
-                List<Integer> modeList = new ArrayList<>();
-                for (int FaceD : modes){
-                    modeList.add(FaceD);
-                    Log.d(fragment.getClass().getSimpleName(), "FD Type : " + Integer.toString(FaceD));
-                }
-
-                Log.d(fragment.getClass().getSimpleName(), "FD Count : " + Integer.toString(max_count));
-
-                if(max_count > 0){
-                    mFaceDetectSupported = true;
-                    mFaceDetectMode = Collections.max(modeList);
-                }
-
-            }
-
             // orientation
             int rotation = fragment.getActivity().getWindowManager().getDefaultDisplay().getRotation();
-            //captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
             // captureBuilder.set(CaptureRequest.JPEG_ORIENTATION,-90);
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 270);
+//            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, 270);
 
             // nama file dengan tanggal
             Date captureDate = new Date();
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
             String captureDateFormatted = format.format(captureDate);
 
-            final File file = new File(Environment.getExternalStorageDirectory() + "/FDCaptureAdit_" + captureDateFormatted + ".jpg");
+//            final File file = new File(Environment.getExternalStorageDirectory() + "/CARNAGE_IMG_" + captureDateFormatted + ".jpg");
+            final File file = new File(fragment.getActivity().getExternalFilesDir(null) + "/CARNAGE_IMG_" + captureDateFormatted + ".jpg");
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener(){
 
@@ -442,14 +376,6 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
                             Toast.makeText(fragment.getContext(),"Tidak ada wajah yang terdeteksi !" + mode, Toast.LENGTH_SHORT).show();
                         }
                     }
-
-//                    try{
-//                        //facesNum = faces.length;
-//                        Log.d(fragment.getClass().getSimpleName(), "Wajah : " + faces.length + "\n Mode : " + mode);
-//                        Toast.makeText(fragment.getContext(),"Wajah : " + faces.length +"\nMode : " + mode, Toast.LENGTH_LONG).show();
-//                    }catch(NullPointerException e){
-//                        Toast.makeText(fragment.getContext(),"Wajah tidak ada!" + mode, Toast.LENGTH_LONG).show();
-//                    }
                 }
 
                 public int getFacesInt(CaptureResult result){
@@ -498,63 +424,14 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
 
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-//                    super.onCaptureCompleted(session, request, result);
-//                    Toast.makeText(fragment.getActivity(), "Foto disimpan :" + file, Toast.LENGTH_LONG).show();
-                    // pindah ke fragment result
-                    String uri = Environment.getExternalStorageDirectory() + "/FDCaptureAdit_" + captureDateFormatted + ".jpg";
-
-                    //getFaces(result);
-                    //int faces = getFacesInt(result);
-                    //Toast.makeText(fragment.getContext(),"Wajah : " + faces, Toast.LENGTH_LONG).show();
-                    Face facesArray[] = getFacesArray(result);
-                    int left = 0;
-                    int right = 0;
-                    int top = 0;
-                    int bottom = 0;
-
-                    //HashMap<Integer , Face> resultmap;
-
-                    if(facesArray != null){
-                        if(facesArray.length > 0){
-
-                            for(int i=0; i<facesArray.length; i++){
-                                left = facesArray[i].getBounds().left;
-                                right = facesArray[i].getBounds().right;
-                                top = facesArray[i].getBounds().top;
-                                bottom = facesArray[i].getBounds().bottom;
-
-                                resultmap.put(i, facesArray[i]);
-
-                                Toast.makeText(fragment.getContext(),"Wajah : " + facesArray.length
-                                        +"\nLeft : " + left
-                                        +"\nRight : " + right
-                                        +"\nTop : " + top
-                                        +"\nBottom : " + bottom, Toast.LENGTH_LONG).show();
-                            }
-
-                            //Log.d(fragment.getClass().getSimpleName(), "Wajah : " + facesArray.length + "\n Jumlah Mode : " + mode);
-                            //Toast.makeText(fragment.getContext(),"Wajah : " + facesArray.length + "\nMode : " + mode, Toast.LENGTH_LONG).show();
-
-                        }else{
-                            Log.d(fragment.getClass().getSimpleName(), "Tidak ada wajah yang terdeteksi !");
-                            Toast.makeText(fragment.getContext(),"Tidak ada wajah yang terdeteksi !", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    //if(resultmap != null){
-                    goToResult(uri, facesNum, resultmap);
-                    //}else{
-                    //    Toast.makeText(fragment.getContext(),"ResultMap Null !", Toast.LENGTH_SHORT).show();
-                    // }
-
+                    super.onCaptureCompleted(session, request, result);
+                    Toast.makeText(fragment.getActivity(), "Foto disimpan :" + file, Toast.LENGTH_LONG).show();
                     //createCameraPreviewSession();
                 }
 
                 @Override
                 public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
-//                    super.onCaptureProgressed(session, request, partialResult);
-                    //getFaces(partialResult);
-                    //Toast.makeText(fragment.getContext(), "Capture in progress", Toast.LENGTH_SHORT).show();
+                    super.onCaptureProgressed(session, request, partialResult);
                 }
             };
 
@@ -580,25 +457,47 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
         }
     }
 
+    public void processDetectFace(Face facesArray[]){
+        int left = 0;
+        int right = 0;
+        int top = 0;
+        int bottom = 0;
+
+        if(facesArray != null){
+            if(facesArray.length > 0){
+
+                for(int i=0; i<facesArray.length; i++){
+                    left = facesArray[i].getBounds().left;
+                    right = facesArray[i].getBounds().right;
+                    top = facesArray[i].getBounds().top;
+                    bottom = facesArray[i].getBounds().bottom;
+
+                    resultmap.put(i, facesArray[i]);
+
+                    Toast.makeText(fragment.getContext(),"Wajah : " + facesArray.length
+                            +"\nLeft : " + left
+                            +"\nRight : " + right
+                            +"\nTop : " + top
+                            +"\nBottom : " + bottom, Toast.LENGTH_LONG).show();
+                }
+
+                //Log.d(fragment.getClass().getSimpleName(), "Wajah : " + facesArray.length + "\n Jumlah Mode : " + mode);
+                //Toast.makeText(fragment.getContext(),"Wajah : " + facesArray.length + "\nMode : " + mode, Toast.LENGTH_LONG).show();
+
+            }else{
+                Log.d(fragment.getClass().getSimpleName(), "Tidak ada wajah yang terdeteksi !");
+                Toast.makeText(fragment.getContext(),"Tidak ada wajah yang terdeteksi !", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     public String getFileName(){
         // nama file dengan tanggal
         Date captureDate = new Date();
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy-HH-mm-ss");
         String captureDateFormatted = format.format(captureDate);
 
-        return "/FDCaptureAdit_" + captureDateFormatted;
-    }
-
-    public void save(byte[] bytes, File file) throws IOException {
-        OutputStream output = null;
-        try {
-            output = new FileOutputStream(file);
-            output.write(bytes);
-        } finally {
-            if (null != output) {
-                output.close();
-            }
-        }
+        return "CARNAGE_" + captureDateFormatted;
     }
 
     public void closeCamera() {
@@ -639,6 +538,11 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
             return;
         }
 
+        if(ContextCompat.checkSelfPermission(fragment.getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
+            requestRecordAudio();
+            return;
+        }
+
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
         CameraManager manager = (CameraManager) fragment.getActivity().getSystemService(Context.CAMERA_SERVICE);
@@ -663,13 +567,14 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
 
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-//                if(facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT){
-//                    continue;
-//                }
-
-                if(facing != null && facing == CameraCharacteristics.LENS_FACING_BACK){
+                if(facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT){
                     continue;
                 }
+
+//                if(facing != null && facing == CameraCharacteristics.LENS_FACING_BACK){
+//                    continue;
+//                }
+                orientationSensor = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
                 StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 if(map == null){
@@ -699,9 +604,11 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
                     maxPreviewHeight = MAX_PREVIEW_HEIGHT;
                 }
 
+                videoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth, maxPreviewHeight, largest);
                 mCameraId = cameraId;
+//                mediaRecorder = new MediaRecorder();
                 return;
             }
         } catch (CameraAccessException e) {
@@ -733,27 +640,10 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
 
                     try {
                         mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                        // face detection
-                        mPreviewRequestBuilder.set(CaptureRequest.STATISTICS_FACE_DETECT_MODE, CameraMetadata.STATISTICS_FACE_DETECT_MODE_FULL);
-                        // setFaceDetect(mPreviewRequestBuilder, mFaceDetectMode);
 
                         mPreviewRequest = mPreviewRequestBuilder.build();
 
                         mCaptureSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
-                        //mCaptureSession.setRepeatingRequest(mPreviewRequest, listener, mBackgroundHandler);
-
-                        //Bitmap bitmap = CaptureResult.STATISTICS_FACES;
-
-                        handler = new Handler();
-                        runnable = new Runnable() {
-                            @RequiresApi(api = Build.VERSION_CODES.M)
-                            @Override
-                            public void run() {
-                                takePicture();
-                            }
-                        };
-
-                        //handler.post(runnable);
 
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
@@ -793,6 +683,14 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
         }
     }
 
+    public void requestRecordAudio(){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(fragment.getActivity(), Manifest.permission.RECORD_AUDIO)){
+            ActivityCompat.requestPermissions(fragment.getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO);
+        }else{
+            ActivityCompat.requestPermissions(fragment.getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORD_AUDIO);
+        }
+    }
+
     public void startBackgroundThread(){
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
@@ -809,6 +707,22 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Size chooseVideoSize(Size[] choices){
+        for(Size size : choices){
+            if(size.getWidth() == 1920 && size.getHeight() == 1080){
+                return size;
+            }
+        }
+
+        for(Size size : choices){
+            if(size.getWidth() == size.getHeight() * 4/3 && size.getWidth() <= 1080){
+                return size;
+            }
+        }
+
+        return choices[choices.length - 1];
     }
 
     public static Size chooseOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight,
@@ -860,29 +774,6 @@ public class Camera2Utility implements ImageReader.OnImageAvailableListener, Sur
             matrix.postRotate(180, centerX, centerY);
         }
         mTextureView.setTransform(matrix);
-    }
-
-    @Override
-    public void onImageAvailable(ImageReader reader) {
-//        Image image = reader.acquireLatestImage();
-        image = reader.acquireNextImage();
-        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-        byte[] bytes = new byte[buffer.capacity()];
-
-//        Face[] faces =
-        reader.getSurface();
-
-
-
-//
-        if(image != null){
-            Log.d(this.getClass().getSimpleName(), "onImageAvailable : " + image.getFormat() +"\n" +
-                    "Buffer : " + buffer + "\n" +
-                    "bytes : " + bytes);
-            Toast.makeText(fragment.getContext(), "Image : " + image, Toast.LENGTH_SHORT).show();
-        }
-
-        image.close();
     }
 
     @Override

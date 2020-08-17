@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/fragmentSatu"
-        android:name="com.adit.carnage.Fragments.HostFragment"
+        android:name="com.adit.carnage.fragments.HostFragment"
         android:label="FragmentSatu" >
         <action
             android:id="@+id/chatFragmentAction"
@@ -23,15 +23,15 @@
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
-        android:name="com.adit.carnage.Fragments.ChatFragment"
+        android:name="com.adit.carnage.fragments.ChatFragment"
         android:label="ChatFragment" />
     <fragment
         android:id="@+id/contactsFragment"
-        android:name="com.adit.carnage.Fragments.ContactsFragment"
+        android:name="com.adit.carnage.fragments.ContactsFragment"
         android:label="ContactsFragment" />
     <fragment
         android:id="@+id/fragmentDua"
-        android:name="com.adit.carnage.Fragments.FragmentDua"
+        android:name="com.adit.carnage.fragments.FragmentDua"
         android:label="FragmentDua" >
         <argument
             android:name="title"

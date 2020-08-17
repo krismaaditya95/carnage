@@ -1,4 +1,4 @@
-package com.adit.carnage;
+package com.adit.carnage.activities;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -8,8 +8,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.adit.carnage.Adapter.HomePagerAdapter;
-import com.adit.carnage.Fragments.HostFragment;
+import com.adit.carnage.R;
+import com.adit.carnage.adapters.HomePagerAdapter;
+import com.adit.carnage.fragments.HostFragment;
 
 import io.reactivex.annotations.NonNull;
 

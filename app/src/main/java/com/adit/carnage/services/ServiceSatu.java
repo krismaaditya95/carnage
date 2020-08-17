@@ -1,4 +1,4 @@
-package com.adit.carnage;
+package com.adit.carnage.services;
 
 import android.app.Service;
 import android.content.Intent;

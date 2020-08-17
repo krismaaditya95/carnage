@@ -1,13 +1,13 @@
-package com.adit.carnage.Adapter;
+package com.adit.carnage.adapters;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import com.adit.carnage.Fragments.ChatFragment;
-import com.adit.carnage.Fragments.ContactsFragment;
-import com.adit.carnage.Fragments.FragmentDua;
+import com.adit.carnage.fragments.ChatFragment;
+import com.adit.carnage.fragments.ContactsFragment;
+import com.adit.carnage.fragments.FragmentDua;
 
 public class HomePagerAdapter extends FragmentPagerAdapter {
 
@@ -28,13 +28,13 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
         Fragment fragment = null;
         switch(position) {
             case 0:
-                fragment = ChatFragment.newInstance("Ini halaman chat", "hehe");
+                fragment = ChatFragment.newInstance();
                 break;
             case 1:
-                fragment = FragmentDua.newInstance("Ini halaman story", "haha");
+                fragment = FragmentDua.newInstance();
                 break;
             case 2:
-                fragment = ContactsFragment.newInstance("Ini halaman kontak", "su");
+                fragment = ContactsFragment.newInstance();
                 break;
         }
         return fragment;
@@ -50,6 +50,21 @@ public class HomePagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
 //        return super.getPageTitle(position);
-        return "HALAMAN " + (position + 1);
+        String title = "";
+
+        switch(position){
+            case 0:
+                title = "Video Recorder";
+                break;
+            case 1:
+                title = "Tracker";
+                break;
+            case 2:
+                title = "Locked";
+                break;
+        }
+
+        //return "HALAMAN " + (position + 1);
+        return title;
     }
 }

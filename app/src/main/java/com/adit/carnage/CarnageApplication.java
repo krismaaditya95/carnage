@@ -24,19 +24,19 @@ public class CarnageApplication extends Application implements LifecycleObserver
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded(){
-        this.startService(new Intent(this, SecretService.class));
+        //this.startService(new Intent(this, SecretService.class));
         Toast.makeText(this, "App onSTOP event", Toast.LENGTH_SHORT).show();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onAppDestroyed(){
-        this.startService(new Intent(this, SecretService.class));
+//        this.startService(new Intent(this, SecretService.class));
         Toast.makeText(this, "App onDESTROY event", Toast.LENGTH_SHORT).show();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded(){
-        this.stopService(new Intent(this, SecretService.class));
+        //this.stopService(new Intent(this, SecretService.class));
         Toast.makeText(this, "App onSTART event", Toast.LENGTH_SHORT).show();
     }
 }

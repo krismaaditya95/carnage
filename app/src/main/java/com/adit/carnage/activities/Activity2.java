@@ -1,4 +1,4 @@
-package com.adit.carnage;
+package com.adit.carnage.activities;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -10,7 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.adit.carnage.Fragments.HostFragment;
+import com.adit.carnage.R;
+import com.adit.carnage.fragments.HostFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

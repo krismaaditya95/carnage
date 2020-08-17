@@ -1,4 +1,4 @@
-package com.adit.carnage.Fragments;
+package com.adit.carnage.fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,10 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.adit.carnage.Activity2;
-import com.adit.carnage.Adapter.HomePagerAdapter;
-import com.adit.carnage.BaseActivity;
-import com.adit.carnage.MapActivity;
+import com.adit.carnage.activities.Activity2;
+import com.adit.carnage.adapters.HomePagerAdapter;
+import com.adit.carnage.activities.BaseActivity;
+import com.adit.carnage.activities.MapActivity;
 import com.adit.carnage.R;
 import com.google.android.material.tabs.TabLayout;
 

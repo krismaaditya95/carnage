@@ -1,58 +1,40 @@
-package com.adit.carnage.Fragments;
+package com.adit.carnage.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.navigation.NavAction;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.adit.carnage.MainActivity;
 import com.adit.carnage.R;
-import com.adit.carnage.services.SecretService;
-import com.googlecode.leptonica.android.AdaptiveMap;
+import com.adit.carnage.classes.Camera2Utility;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ChatFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ChatFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     @BindView(R.id.tvChatFragment)
     TextView tvChatFragment;
@@ -81,38 +63,33 @@ public class ChatFragment extends Fragment {
     @BindView(R.id.etArg)
     EditText etArg;
 
-    public String result = "";
+    @BindView(R.id.camPreview)
+    TextureView camPreview;
 
+    private String result = "";
+    private Camera2Utility camera2Utility;
+    private boolean isRecording = false;
+
+    public boolean isRecording() {
+        return isRecording;
+    }
+
+    public void setRecording(boolean recording) {
+        isRecording = recording;
+    }
 
     public ChatFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChatFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChatFragment newInstance(String param1, String param2) {
+    public static ChatFragment newInstance() {
         ChatFragment fragment = new ChatFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -121,12 +98,66 @@ public class ChatFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         ButterKnife.bind(this, view);
+        camera2Utility = new Camera2Utility(this, camPreview);
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+//        scanText("Welcome to HackerRank's Java tutorials!");
+        //camera2Utility.prepareRecording();
+//        fungsi00();
+//        fungsi01("This website is for losers LOL!");
+//        fungsi02(5);
+//        fungsi03("+", 2, 2);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        camera2Utility.closeCamera();
+        camera2Utility.stopBackgroundThread();
+        Toast.makeText(getContext(), "Fragment paused", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Toast.makeText(getContext(), "Fragment resumed", Toast.LENGTH_SHORT).show();
+        camera2Utility.startBackgroundThread();
+        if(camPreview.isAvailable()){
+            camera2Utility.openCamera(camPreview.getWidth(), camPreview.getHeight());
+        }else{
+            camPreview.setSurfaceTextureListener(camera2Utility.mSurfaceTextureListener);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(getContext(), "Fragment destroyed", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.btnStartService)
+    public void capturePicture(){
+        camera2Utility.takePicture();
+    }
+
+    @OnClick(R.id.btnStartRecording)
+    public void record(){
+        if(!isRecording()){
+            camera2Utility.prepareRecording();
+            setRecording(true);
+        }else if(isRecording()){
+            camera2Utility.stopRecording();
+            setRecording(false);
+        }
 
     }
 
@@ -945,6 +976,30 @@ public class ChatFragment extends Fragment {
 
     public void tensorFlow(){
 
+    }
+
+    public void scanText(String text){
+        //Welcome to HackerRank's Java tutorials!
+        Scanner scanner = new Scanner(text);
+        String s = scanner.nextLine();
+//        String s0 = scanner.next();
+        showDialog("Debug", s + "\n");
+    }
+
+    public void showDialog(String title, String info){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+
+        DialogInterface.OnClickListener a = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        };
+        dialog.setCancelable(true)
+                .setTitle(title)
+                .setMessage(info)
+                .setNeutralButton("COK", a)
+                .show();
     }
 
 }
