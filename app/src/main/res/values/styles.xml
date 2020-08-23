@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent1</item>
     </style>
 
+    <style name="MyCardView" parent="CardView">
+        <item name="cardCornerRadius">8dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+
+
 </resources>

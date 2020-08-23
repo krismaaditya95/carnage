@@ -1,7 +1,7 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white">
 
 <!--<ScrollView-->
@@ -32,6 +32,11 @@
                             android:textColor="@color/colorPrimaryDark"/>
                 </androidx.cardview.widget.CardView>
 
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/mediaRv"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"/>-->
+
                 <Button
                     android:id="@+id/btnStartService"
                     android:layout_height="wrap_content"
@@ -53,11 +58,27 @@
                     android:text="Start Recording"
                     android:textColor="@color/maroonred"/>
 
+                <TextView
+                    android:id="@+id/tvFileCount"
+                    android:layout_below="@+id/btnStartRecording"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="FILE_COUNT"
+                    android:layout_margin="20dp"
+                    android:textColor="@color/colorPrimary"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mediaRv"
+                    android:layout_below="@+id/tvFileCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <TextureView
                     android:id="@+id/camPreview"
                     android:layout_below="@+id/btnStartService"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/btnNav0"

@@ -72,5 +72,7 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }

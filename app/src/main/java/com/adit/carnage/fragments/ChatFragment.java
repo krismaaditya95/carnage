@@ -1,13 +1,24 @@
 package com.adit.carnage.fragments;
 
+import android.Manifest;
+import android.content.ContentUris;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -17,9 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adit.carnage.R;
+import com.adit.carnage.adapters.ImageAdapter;
 import com.adit.carnage.classes.Camera2Utility;
+import com.adit.carnage.classes.Pictures;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,6 +49,8 @@ public class ChatFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int REQUEST_READ_EXTERNAL_STORAGE = 0;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 
     @BindView(R.id.tvChatFragment)
     TextView tvChatFragment;
@@ -65,6 +81,15 @@ public class ChatFragment extends Fragment {
 
     @BindView(R.id.camPreview)
     TextureView camPreview;
+
+    @BindView(R.id.mediaRv)
+    RecyclerView mediaRv;
+
+    @BindView(R.id.tvFileCount)
+    TextView tvFileCount;
+
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private String result = "";
     private Camera2Utility camera2Utility;
@@ -111,6 +136,8 @@ public class ChatFragment extends Fragment {
 //        fungsi01("This website is for losers LOL!");
 //        fungsi02(5);
 //        fungsi03("+", 2, 2);
+        scanFiles();
+
     }
 
     @Override
@@ -181,6 +208,95 @@ public class ChatFragment extends Fragment {
     public void goToNavComponent02(){
         //NavDirections action = FragmentSatuDirections.contactsFragmentAction();
         //NavHostFragment.findNavController(this).navigate(action);
+    }
+
+    public void requestReadFileOnInternalStorage(){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)){
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL_STORAGE);
+        }else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_READ_EXTERNAL_STORAGE);
+        }
+    }
+
+    public void requestWriteFileOnInternalStorage(){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+        }else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
+    private void setupRV(String layout){
+        mediaRv.setHasFixedSize(true);
+
+        if(layout.equalsIgnoreCase("linear")){
+            layoutManager = new LinearLayoutManager(getContext());
+        }else if(layout.equalsIgnoreCase("grid")) {
+            layoutManager = new GridLayoutManager(getContext(), 3);
+        }
+
+        mediaRv.setLayoutManager(layoutManager);
+        mediaRv.setAdapter(adapter);
+    }
+
+    private void scanFiles(){
+//        String path = MediaStore.
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestReadFileOnInternalStorage();
+            return;
+        }
+
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestWriteFileOnInternalStorage();
+            return;
+        }
+
+        List<Pictures> picturesList = new ArrayList<Pictures>();
+
+        String[] projection = new String[]{
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DISPLAY_NAME,
+                MediaStore.Images.Media.SIZE
+        };
+
+        String selection = "";
+        String selectionArgs[] = new String[]{
+
+        };
+
+        // by name
+        //String sortOrder = MediaStore.Images.Media.DISPLAY_NAME + " ASC";
+
+        String sortOrder = MediaStore.Images.Media.DATE_MODIFIED + " ASC";
+
+        try (Cursor cursor = getActivity().getApplicationContext().getContentResolver().query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder
+            )){
+            int idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+            int nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+            int sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE);
+
+            while(cursor.moveToNext()){
+                long id = cursor.getLong(idColumn);
+                String name = cursor.getString(nameColumn);
+                int size = cursor.getInt(sizeColumn);
+
+                Uri contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+
+                picturesList.add(new Pictures(contentUri, name, size));
+                File file = new File(contentUri.getPath());
+            }
+        }
+
+        adapter = new ImageAdapter(picturesList);
+        Toast.makeText(getContext(), picturesList.size() + " ", Toast.LENGTH_SHORT).show();
+        tvFileCount.setText("TOTAL number of image files : " + picturesList.size());
+        //setupRV("grid");
+        setupRV("linear");
     }
 
     private void dumpFunctions(){
