@@ -145,13 +145,13 @@ public class ChatFragment extends Fragment {
         super.onPause();
         camera2Utility.closeCamera();
         camera2Utility.stopBackgroundThread();
-        Toast.makeText(getContext(), "Fragment paused", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Fragment paused", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Toast.makeText(getContext(), "Fragment resumed", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Fragment resumed", Toast.LENGTH_SHORT).show();
         camera2Utility.startBackgroundThread();
         if(camPreview.isAvailable()){
             camera2Utility.openCamera(camPreview.getWidth(), camPreview.getHeight());
@@ -168,7 +168,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(getContext(), "Fragment destroyed", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Fragment destroyed", Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.btnStartService)
@@ -293,7 +293,7 @@ public class ChatFragment extends Fragment {
         }
 
         adapter = new ImageAdapter(picturesList);
-        Toast.makeText(getContext(), picturesList.size() + " ", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), picturesList.size() + " ", Toast.LENGTH_SHORT).show();
         tvFileCount.setText("TOTAL number of image files : " + picturesList.size());
         //setupRV("grid");
         setupRV("linear");

@@ -5,15 +5,32 @@
     android:background="@color/colorPrimaryDark1"
     tools:context="com.adit.carnage.fragments.ContactsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/tvContacts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
+        android:layout_height="wrap_content"
+        android:text="Now Playing"
         android:textColor="@color/white"
         android:layout_margin="20dp"
-        android:textSize="20dp"
-        />
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvContacts"
+        android:layout_marginTop="10dp"
+        android:layout_margin="40dp"
+        android:background="@drawable/custom_button"
+        android:text="LOGOUT"
+        android:textColor="@color/customblack" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_below="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
 
 </RelativeLayout>

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,12 @@ import android.view.View;
 import com.adit.carnage.R;
 
 public class BaseActivity extends AppCompatActivity {
+
+    private SharedPreferences pref;
+
+    public void initSharedPreferences(){
+        pref = getApplicationContext().getSharedPreferences("pref", 0);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

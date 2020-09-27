@@ -78,7 +78,7 @@
                     android:layout_below="@+id/btnStartService"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
                 <Button
                     android:id="@+id/btnNav0"

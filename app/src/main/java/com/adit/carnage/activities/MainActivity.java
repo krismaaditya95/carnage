@@ -1,24 +1,33 @@
 package com.adit.carnage.activities;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.adit.carnage.R;
 import com.adit.carnage.adapters.HomePagerAdapter;
+import com.adit.carnage.adapters.MoviesAdapter;
+import com.adit.carnage.apis.classes.Movie;
 import com.adit.carnage.fragments.HostFragment;
+import com.adit.carnage.interfaces.HomeView;
+import com.adit.carnage.presenters.MainPresenter;
+
+import java.util.List;
 
 import io.reactivex.annotations.NonNull;
 
-public class MainActivity extends BaseActivity implements HostFragment.OnFragmentInteractionListener {
+public class MainActivity extends BaseActivity implements HostFragment.OnFragmentInteractionListener, HomeView {
 
     HostFragment fragment = new HostFragment();
     HomePagerAdapter homePagerAdapter;
     ViewPager viewPager;
+    MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +42,15 @@ public class MainActivity extends BaseActivity implements HostFragment.OnFragmen
             if(savedInstanceState != null){
                 return;
             }
-
-//            FragmentSatu fragment = new FragmentSatu();
-//            fragment.setArguments(args);
-//            getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();
-
-//            FragmentSatu.show(this, args);
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
+
+        presenter = new MainPresenter(this, this);
+        presenter.initSharedPreferences();
+        presenter.checkLogin();
     }
 
     @Override
@@ -71,5 +78,10 @@ public class MainActivity extends BaseActivity implements HostFragment.OnFragmen
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    @Override
+    public void setMoviesAdapter(List<Movie> list) {
+        Toast.makeText(this, "setMovieAdapter event occured", Toast.LENGTH_SHORT).show();
     }
 }
